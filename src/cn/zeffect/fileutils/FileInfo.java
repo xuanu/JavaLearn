@@ -10,10 +10,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class FileInfo {
+	public static final String SERVER_IP="http://192.168.1.148:8888/";
+	public static final String SEACHER_PATH="E:\\临时备份文件";
+	public static final String SAVE_PATH="E:\\wytinfo.txt";
+	
 	public static void main(String[] args) {
 		log("该类用于输出某个目录的文件列表信息");
-		List<File> files=getFileInfo("D:\\BaiduYunDownload");
-		
+		List<File> files=getFileInfo(SEACHER_PATH);
+		FileCompare.write(SAVE_PATH, makeJson(files));
+		log("输出完成");
 	}
 	
 	
@@ -32,6 +37,7 @@ public class FileInfo {
 				dataJson.put("lastmodified", tempFile.lastModified());
 				dataJson.put("length", tempFile.length());
 				dataJson.put("localpath", tempFile.getAbsolutePath());
+				dataJson.put("downurl", SERVER_IP+tempFile.getAbsolutePath().replace(SEACHER_PATH, ""));
 			} catch (JSONException e) {
 			}finally {
 				dataArray.put(dataJson);
@@ -45,7 +51,7 @@ public class FileInfo {
 	 * @param path 一定要是一个目录
 	 */
 	private static List<File> getFileInfo(String path) {
-		if (isEmpty(path)) {
+		if (TextUtils.isEmpty(path)) {
 			return Collections.EMPTY_LIST;
 		}
 		File tempFile=new File(path);
@@ -64,9 +70,7 @@ public class FileInfo {
 	}
 	
 
-	private static boolean isEmpty(String info) {
-		return info==null||info.equals("")||info.length()<=0;  
-	}
+	
 
 	private static void log(String info) {
 		System.out.println(info);
